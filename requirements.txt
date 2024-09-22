@@ -1,0 +1,7 @@
+django
+djangorestframework
+gunicorn
+pillow
+boto3
+django-storages
+python-decouple
