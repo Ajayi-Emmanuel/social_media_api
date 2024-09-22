@@ -28,7 +28,7 @@ SECRET_KEY = 'django-insecure-s&^_ximd!72!qdalt$*&2ypczb&^0u3nr)lg(b9$#t_%60k$pk
 # DEBUG = True
 DEBUG = False
 
-ALLOWED_HOSTS = []
+# ALLOWED_HOSTS = []
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS').split(',')
 
 SECURE_BROWSER_XSS_FILTER = True
@@ -106,11 +106,11 @@ WSGI_APPLICATION = 'social_media_api.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': config('DB_NAME'),  # Database name
-        'USER': config('DB_USER'),  # Database user
-        'PASSWORD': config('DB_PASSWORD'),  # Database password
-        'HOST': config('DB_HOST', default='localhost'),  # Database host
-        'PORT': config('DB_PORT', default='5432'),  # Database port
+        'NAME': os.environ.get('DB_NAME'),  # Database name
+        'USER': os.environ.get('DB_USER'),  # Database user
+        'PASSWORD': os.environ.get('DB_PASSWORD'),  # Database password
+        'HOST': os.environ.get('DB_HOST'),  # Database host
+        'PORT': os.environ.get('DB_PORT'),  # Database port
     }
 }
 
@@ -133,6 +133,24 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(BASE_DIR, 'django.log'),
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['file'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
@@ -154,11 +172,17 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
 # AWS S3 Configuration
-AWS_ACCESS_KEY_ID = config('AWS_ACCESS_KEY_ID')  # Set in your .env file
-AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY')  # Set in your .env file
-AWS_STORAGE_BUCKET_NAME = config('AWS_STORAGE_BUCKET_NAME')  # Your S3 bucket name
-AWS_S3_REGION_NAME = config('AWS_S3_REGION_NAME')  # Your AWS region
-AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'  # Custom domain if needed
+AWS__ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
+AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME')
+AWS_S3_REGION_NAME = os.environ.get('AWS_S3_REGION_NAME')
+AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
+
+# AWS_ACCESS_KEY_ID = config('AWS_ACCESS_KEY_ID')  # Set in your .env file
+# AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY')  # Set in your .env file
+# AWS_STORAGE_BUCKET_NAME = config('AWS_STORAGE_BUCKET_NAME')  # Your S3 bucket name
+# AWS_S3_REGION_NAME = config('AWS_S3_REGION_NAME')  # Your AWS region
+# AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'  # Custom domain if needed
 
 
 MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/media/'
